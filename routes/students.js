@@ -3,13 +3,15 @@ const router = express.Router();
 const Student = require('../models/Student');
 
 router.post('/savedata', async (req, res) => {
-  try {
-    const Studentt =  new Student(req.body);;
-    await Studentt.save();
-    res.status(201).json('success');
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
+
+  console.log("jkskj")
+  // try {
+  //   const Studentt =  new Student(req.body);;
+  //   await Studentt.save();
+  //   res.status(201).json('success');
+  // } catch (err) {
+  //   res.status(400).json({ error: err.message });
+  // }
 });
 
 router.get('/getdata', async (req, res) => {
