@@ -1,4 +1,5 @@
 const express = require('express');
+const app = express();
 const router = express.Router();
 const Student = require('../models/Student');
 const cors = require('cors')
