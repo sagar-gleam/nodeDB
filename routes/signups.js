@@ -4,7 +4,9 @@ const router = express.Router();
 const Signup = require('../models/Signup');
 const bcrypt = require('bcrypt');
 const cors = require('cors')
-app.use(cors());
+app.use(cors({
+  origin: 'https://nodedb-7h8s.onrender.com', // Replace with your domain
+}))
 router.post('/savedata', async (req, res) => {
   try {
     const Signups =  new Signup(req.body);;
