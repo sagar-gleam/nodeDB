@@ -75,7 +75,7 @@ router.put('/update/:id', async (req, res) => {
   
       const students = await Student.find(query);
       res.json(students);
-    } catch (err) {
+    } catch (err)  {
       res.status(400).json({ error: err.message });
     }
   });
