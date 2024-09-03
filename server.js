@@ -8,10 +8,11 @@ const router = express.Router();
 const app = express();
 const port = process.env.PORT || 4000;
 
-// Middleware
 app.use(cors({
-  origin: 'https://nodedb-486k.onrender.com', // Replace with your domain
-}))
+  origin: 'https://frond-angular.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(bodyParser.json());
 
 // MongoDB Connection

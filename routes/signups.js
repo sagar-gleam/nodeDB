@@ -5,8 +5,10 @@ const Signup = require('../models/Signup');
 const bcrypt = require('bcrypt');
 const cors = require('cors')
 app.use(cors({
-  origin: 'https://nodedb-486k.onrender.com', // Replace with your domain
-}))
+  origin: 'https://frond-angular.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 router.post('/savedata', async (req, res) => {
   try {
     const Signups =  new Signup(req.body);;
