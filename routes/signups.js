@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Signup = require('../models/Signup');
 const bcrypt = require('bcrypt');
-
+const cors = require('cors')
+app.use(cors());
 router.post('/savedata', async (req, res) => {
   try {
     const Signups =  new Signup(req.body);;

@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Student = require('../models/Student');
-
+const cors = require('cors')
+app.use(cors());
 router.post('/savedata', async (req, res) => {
   try {
     const Studentt =  new Student(req.body);;
