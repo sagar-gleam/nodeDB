@@ -4,7 +4,7 @@ const router = express.Router();
 const Student = require('../models/Student');
 const cors = require('cors')
 app.use(cors({
-  origin: 'https://nodedb-7h8s.onrender.com', // Replace with your domain
+  origin: 'https://nodedb-486k.onrender.com', // Replace with your domain
 }))
 router.post('/savedata', async (req, res) => {
   try {
