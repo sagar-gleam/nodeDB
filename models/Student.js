@@ -8,7 +8,7 @@ const studentSchema = new mongoose.Schema({
   dob: {
     type: Date,
     required: true,
-  },
+  },  
 });
 
 module.exports = mongoose.model('Student', studentSchema);

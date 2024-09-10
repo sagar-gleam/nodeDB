@@ -8,11 +8,12 @@ const router = express.Router();
 const app = express();
 const port = process.env.PORT || 4000;
 
-app.use(cors({
-  origin: 'https://frond-angular.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+// app.use(cors({
+//   origin: 'https://frond-angular.vercel.app',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// }));
+app.use(cors())
 app.use(bodyParser.json());
 
 // MongoDB Connection

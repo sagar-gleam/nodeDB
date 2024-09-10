@@ -4,11 +4,15 @@ const router = express.Router();
 const Signup = require('../models/Signup');
 const bcrypt = require('bcrypt');
 const cors = require('cors')
-app.use(cors({
-  origin: 'https://frond-angular.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+const jwt = require('jsonwebtoken');
+// app.use(cors({
+//   origin: 'https://frond-angular.vercel.app',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+// }));
+
+const secretKey = process.env.JWT_SECRET || '05003'; 
+app.use(cors())
 router.post('/savedata', async (req, res) => {
   try {
     const Signups =  new Signup(req.body);;
@@ -36,9 +40,8 @@ router.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
-
-    // If successful, send a success response
-    res.status(200).json({ message: 'Login successful' });
+    const token = jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
+    res.status(200).json({ token });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
