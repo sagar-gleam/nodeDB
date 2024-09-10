@@ -1,18 +1,28 @@
-// routes/students.js
 const express = require('express');
 const router = express.Router();
 const Student = require('../models/Student');
 const { authenticateToken } = require('../middleware/authMiddleware');
 const cors = require('cors');
+const upload = require('../middleware/uploadConfig');
 
 // Enable CORS if necessary
 router.use(cors());
 
-// POST: Save student data
-router.post('/savedata', authenticateToken, async (req, res) => {
+// POST: Save student data with image upload
+router.post('/savedata', authenticateToken, upload.single('image'), async (req, res) => {
   try {
-    const student = new Student(req.body);
-    console.log(req.body)
+    const { name, email, mobileNumber, address, dob } = req.body;
+    const image = req.file ? req.file.path : null; // Get image path if uploaded
+
+    const student = new Student({
+      name,
+      email,
+      mobileNumber,
+      address,
+      dob,
+      image
+    });
+
     await student.save();
     res.status(201).json('Student saved successfully');
   } catch (err) {
@@ -31,14 +41,15 @@ router.get('/getdata', authenticateToken, async (req, res) => {
 });
 
 // PUT: Update student data
-router.put('/update/:id', authenticateToken, async (req, res) => {
+router.put('/update/:id', authenticateToken, upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const { name, email, mobileNumber, address, dob } = req.body;
+  const image = req.file ? req.file.path : null;
 
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
       id,
-      { name, email, mobileNumber, address, dob },
+      { name, email, mobileNumber, address, dob, image },
       { new: true }
     );
 

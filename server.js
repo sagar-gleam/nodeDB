@@ -6,7 +6,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const router = express.Router();
 const app = express();
-const port = process.env.PORT || 4000;
+const path = require('path');
+const port = process.env.PORT || 4100;
 
 // app.use(cors({
 //   origin: 'https://frond-angular.vercel.app',
@@ -24,6 +25,7 @@ mongoose.connect(process.env.MONGO_URI)
 // Routes
 app.use('/api/signup', require('./routes/signups'));
 app.use('/api/studnets', require('./routes/students'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
