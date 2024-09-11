@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
 const router = express.Router();
+const mongoose = require('mongoose');
 const Signup = require('../models/Signup');
 const bcrypt = require('bcrypt');
 const cors = require('cors')
 const jwt = require('jsonwebtoken');
+const {authenticateToken} = require('../middleware/authMiddleware')
 // app.use(cors({
 //   origin: 'https://frond-angular.vercel.app',
 //   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -15,7 +17,7 @@ const secretKey = process.env.JWT_SECRET || '05003';
 app.use(cors())
 router.post('/savedata', async (req, res) => {
   try {
-    const Signups =  new Signup(req.body);;
+    const Signups =  new Signup(req.body);
     await Signups.save();
     res.status(201).json('success');
   } catch (err) {
@@ -114,6 +116,40 @@ router.get('/getdata', async (req, res) => {
 //       res.status(400).json({ error: err.message });
 //     }
 //   });
+router.post('/change-password', authenticateToken, async (req, res) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ message: 'New password and confirm password do not match.' });
+  }
+
+  try {
+    const user = await Signup.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Old password is incorrect.' });
+    }
+
+    user.password = newPassword; // Set new password
+    await user.save(); // This will trigger the 'pre' middleware and hash the new password
+
+    res.json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
+
   
   
 
