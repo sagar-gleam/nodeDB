@@ -1,25 +1,18 @@
-// middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
-
-const secretKey = process.env.JWT_SECRET || '05003'; // Replace with your actual secret key
+const secretKey = process.env.JWT_SECRET || '05003';
 
 const authenticateToken = (req, res, next) => {
-  // console.log(req.headers);
-  
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
-  
-  if (token == null) return res.sendStatus(401); // No token, unauthorized
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.status(401).json({ message: 'Unauthorized' });
 
   jwt.verify(token, secretKey, (err, user) => {
-    if (err) {
-      console.error('JWT verification failed:', err.message);
-      return res.sendStatus(403); // Invalid token
-    }
+    if (err) return res.status(403).json({ message: 'Forbidden' });
     req.user = user;
     next();
   });
-  
 };
+
 
 module.exports = { authenticateToken };

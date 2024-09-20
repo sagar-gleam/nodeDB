@@ -42,8 +42,10 @@ router.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
-    const token = jwt.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: '1h' });
-    res.status(200).json({ token });
+    const token = jwt.sign({ id: user._id, role: user.role }, secretKey, { expiresIn: '1h' });
+
+    // Respond with token and user role
+    res.json({ token, role: user.role });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -116,6 +118,8 @@ router.get('/getdata', async (req, res) => {
 //       res.status(400).json({ error: err.message });
 //     }
 //   });
+
+
 router.post('/change-password', authenticateToken, async (req, res) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
 

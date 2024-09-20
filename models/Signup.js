@@ -10,7 +10,7 @@ const SignupSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
 });
 
 // Hash password before saving
