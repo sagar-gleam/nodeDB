@@ -11,6 +11,12 @@ const SignupSchema = new mongoose.Schema({
     required: true,
   },
   password: { type: String, required: true },
+  role: { type: String }, // Add this line
+  permissions: {
+    read: { type: Boolean, default: false },
+    write: { type: Boolean, default: false },
+    delete: { type: Boolean, default: false }
+  }
 });
 
 // Hash password before saving
