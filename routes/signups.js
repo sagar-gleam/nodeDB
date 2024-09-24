@@ -63,11 +63,9 @@ router.get('/getdata', async (req, res) => {
 
 router.put('/promote/:id', authenticateToken, async (req, res) => {
   const userId = req.params;
-  console.log(userId)
 
   try {
     const user = await Signup.findById(userId.id);
-    console.log(user)
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -84,7 +82,6 @@ router.put('/promote/:id', authenticateToken, async (req, res) => {
 
 router.put('/remove-admin/:id', authenticateToken, async (req, res) => {
   const userId = req.params.id;
-  console.log("userr",userId)
 
   try {
     // Find the user by ID
