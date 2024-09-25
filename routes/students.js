@@ -45,11 +45,19 @@ router.put('/update/:id', authenticateToken, upload.single('image'), async (req,
   const { id } = req.params;
   const { name, email, mobileNumber, address, dob } = req.body;
   const image = req.file ? req.file.path : null;
+  const dbData = 
+  {
+    name, email, mobileNumber, address, dob 
+  }
+  if(req.file){
+    dbData.image = image
+  }
+
 
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
       id,
-      { name, email, mobileNumber, address, dob, image },
+      dbData,
       { new: true }
     );
 
