@@ -25,6 +25,8 @@ router.post('/savedata', async (req, res) => {
   }
 });
 
+
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -61,165 +63,199 @@ router.get('/getdata', async (req, res) => {
   }
 });
 
-router.put('/promote/:id', authenticateToken, async (req, res) => {
-  const userId = req.params;
+// router.put('/promote/:id', authenticateToken, async (req, res) => {
+//   const userId = req.params;
+
+//   try {
+//     const user = await Signup.findById(userId.id);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Update the user's role to admin
+//     user.role = 'admin';
+//     await user.save();
+
+//     res.json({ message: 'User promoted to admin successfully', user });
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// });
+
+// router.put('/remove-admin/:id', authenticateToken, async (req, res) => {
+//   const userId = req.params.id;
+
+//   try {
+//     // Find the user by ID
+//     const user = await Signup.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Check if the user is currently an admin
+//     if (user.role !== 'admin') {
+//       return res.status(400).json({ message: 'User is not an admin' });
+//     }
+
+//     // Update the user's role back to a non-admin role (e.g., 'user')
+//     user.role = 'user'; // Adjust this role based on your app's role structure
+//     await user.save();
+
+//     res.json({ message: 'Admin role removed successfully', user });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+// router.put('/grant-read-permission/:id', authenticateToken, async (req, res) => {
+//   const userId = req.params.id;
+
+//   try {
+//     const user = await Signup.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     user.permissions.read = true;  // Set the role to read
+//     await user.save();
+
+//     res.json({ message: 'Read permission granted successfully', user });
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// });
+
+// router.put('/grant-write-permission/:id', authenticateToken, async (req, res) => {
+//   const userId = req.params.id;
+
+//   try {
+//     const user = await Signup.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     user.permissions.write = true;  // Set the role to read
+//     await user.save();
+
+//     res.json({ message: 'write permission granted successfully', user });
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// });
+
+// router.put('/grant-delete-permission/:id', authenticateToken, async (req, res) => {
+//   const userId = req.params.id;
+
+//   try {
+//     const user = await Signup.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     user.permissions.delete = true;  // Set the role to read
+//     await user.save();
+
+//     res.json({ message: 'write permission granted successfully', user });
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// });
+
+
+// router.patch('/grant-revoke-read/:id', async (req, res) => {
+//   try {
+//       const userId = req.params.id;
+//       // Find the user and update their permissions
+//       const user = await Signup.findById(userId);
+      
+//       if (!user) {
+//           return res.status(404).json({ message: 'User not found' });
+//       }
+
+//       user.permissions.read = false; // Revoke read permission
+//       await user.save();
+
+//       res.status(200).json({ message: 'Read permission revoked', user });
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
+// router.patch('/grant-revoke-write/:id', async (req, res) => {
+//   try {
+//       const userId = req.params.id;
+//       // Find the user and update their permissions
+//       const user = await Signup.findById(userId);
+      
+//       if (!user) {
+//           return res.status(404).json({ message: 'User not found' });
+//       }
+
+//       user.permissions.write = false; // Revoke read permission
+//       await user.save();
+
+//       res.status(200).json({ message: 'write permission revoked', user });
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
+// router.patch('/grant-revoke-delete/:id', async (req, res) => {
+//   try {
+//       const userId = req.params.id;
+//       // Find the user and update their permissions
+//       const user = await Signup.findById(userId);
+      
+//       if (!user) {
+//           return res.status(404).json({ message: 'User not found' });
+//       }
+
+//       user.permissions.delete = false; // Revoke read permission
+//       await user.save();
+
+//       res.status(200).json({ message: 'write permission revoked', user });
+//   } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: 'Server error' });
+//   }
+// });
+
+router.put('/update-permissions', authenticateToken, async (req, res) => {
+  const updates = req.body; // Expecting an array of user permission objects
 
   try {
-    const user = await Signup.findById(userId.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+    const promises = updates.map(async (update) => {
+      const user = await Signup.findById(update._id);
+      if (user) {
+        // Update user permissions
+        user.permissions = update.permissions;
 
-    // Update the user's role to admin
-    user.role = 'admin';
-    await user.save();
+        // Update user role if provided
+        if (update.role) {
+          user.role = update.role; // Update role to 'admin' or 'user'
+        }
 
-    res.json({ message: 'User promoted to admin successfully', user });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+        await user.save();
+      }
+    });
 
-router.put('/remove-admin/:id', authenticateToken, async (req, res) => {
-  const userId = req.params.id;
-
-  try {
-    // Find the user by ID
-    const user = await Signup.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Check if the user is currently an admin
-    if (user.role !== 'admin') {
-      return res.status(400).json({ message: 'User is not an admin' });
-    }
-
-    // Update the user's role back to a non-admin role (e.g., 'user')
-    user.role = 'user'; // Adjust this role based on your app's role structure
-    await user.save();
-
-    res.json({ message: 'Admin role removed successfully', user });
+    await Promise.all(promises);
+    res.status(200).json({ message: 'Permissions and roles updated successfully' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.put('/grant-read-permission/:id', authenticateToken, async (req, res) => {
-  const userId = req.params.id;
-
-  try {
-    const user = await Signup.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.permissions.read = true;  // Set the role to read
-    await user.save();
-
-    res.json({ message: 'Read permission granted successfully', user });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-router.put('/grant-write-permission/:id', authenticateToken, async (req, res) => {
-  const userId = req.params.id;
-
-  try {
-    const user = await Signup.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.permissions.write = true;  // Set the role to read
-    await user.save();
-
-    res.json({ message: 'write permission granted successfully', user });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
-router.put('/grant-delete-permission/:id', authenticateToken, async (req, res) => {
-  const userId = req.params.id;
-
-  try {
-    const user = await Signup.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    user.permissions.delete = true;  // Set the role to read
-    await user.save();
-
-    res.json({ message: 'write permission granted successfully', user });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
 
 
-router.patch('/grant-revoke-read/:id', async (req, res) => {
-  try {
-      const userId = req.params.id;
-      // Find the user and update their permissions
-      const user = await Signup.findById(userId);
-      
-      if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-      }
 
-      user.permissions.read = false; // Revoke read permission
-      await user.save();
 
-      res.status(200).json({ message: 'Read permission revoked', user });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
-  }
-});
 
-router.patch('/grant-revoke-write/:id', async (req, res) => {
-  try {
-      const userId = req.params.id;
-      // Find the user and update their permissions
-      const user = await Signup.findById(userId);
-      
-      if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-      }
 
-      user.permissions.write = false; // Revoke read permission
-      await user.save();
 
-      res.status(200).json({ message: 'write permission revoked', user });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
-  }
-});
-
-router.patch('/grant-revoke-delete/:id', async (req, res) => {
-  try {
-      const userId = req.params.id;
-      // Find the user and update their permissions
-      const user = await Signup.findById(userId);
-      
-      if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-      }
-
-      user.permissions.delete = false; // Revoke read permission
-      await user.save();
-
-      res.status(200).json({ message: 'write permission revoked', user });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
-  }
-});
 
 // Update Signup
 // router.put('/update/:id', async (req, res) => {
