@@ -9,7 +9,7 @@ const upload = require('../middleware/uploadConfig');
 router.use(cors());
 
 // POST: Save student data with image upload
-router.post('/savedata', authenticateToken, upload.single('image'), async (req, res) => {
+router.post('/addstudent', authenticateToken, upload.single('image'), async (req, res) => {
   try {
     const { name, email, mobileNumber, address, dob } = req.body;
     const image = req.file ? req.file.path : null; // Get image path if uploaded
@@ -31,7 +31,7 @@ router.post('/savedata', authenticateToken, upload.single('image'), async (req, 
 });
 
 // GET: Retrieve all student data
-router.get('/getdata', authenticateToken, async (req, res) => {
+router.get('/getstudent', authenticateToken, async (req, res) => {
   try {
     const students = await Student.find();
     res.json(students);
@@ -41,7 +41,7 @@ router.get('/getdata', authenticateToken, async (req, res) => {
 });
 
 // PUT: Update student data
-router.put('/update/:id', authenticateToken, upload.single('image'), async (req, res) => {
+router.put('/updatestudent/:id', authenticateToken, upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const { name, email, mobileNumber, address, dob } = req.body;
   const image = req.file ? req.file.path : null;
@@ -72,7 +72,7 @@ router.put('/update/:id', authenticateToken, upload.single('image'), async (req,
 });
 
 // DELETE: Delete student data
-router.delete('/delete/:id', authenticateToken, async (req, res) => {
+router.delete('/deletestudent/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
 
   try {
